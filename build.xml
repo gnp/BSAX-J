@@ -61,8 +61,9 @@ Version tag for this file in the BSAX distribution:
     <property name="deprecation" value="off"/>
 
     <property name="src.dir" value="./src"/>
-    <property name="tests.dir" value="./tests"/>
     <property name="samples.dir" value="./samples"/>
+    <property name="tests.dir" value="./tests"/>
+    <property name="tools.dir" value="./tools"/>
 
     <property name="packages" value="com.gregorpurdy.*"/>
 
@@ -231,10 +232,21 @@ Version tag for this file in the BSAX distribution:
   <!-- =================================================================== -->
   <target name="pack-src" depends="init">
     <echo message="Building the source distribution files (zip,tar)"/>
-    <delete dir="${distbin.dir}"/>
+    <delete dir="${distsrc.dir}"/>
 
     <mkdir dir="${distsrc.dir}"/>
+    <mkdir dir="${distsrc.dir}/samples"/>
     <mkdir dir="${distsrc.dir}/src"/>
+    <mkdir dir="${distsrc.dir}/tests"/>
+    <mkdir dir="${distsrc.dir}/tools"/>
+
+    <copy todir="${distsrc.dir}/samples" >
+        <fileset
+            dir="${samples.dir}"  
+            includes="*"
+            excludes="**/.svn*, **/.#*, **/*.class"
+        />
+    </copy>
 
     <copy todir="${distsrc.dir}/src" >
         <fileset
@@ -244,12 +256,35 @@ Version tag for this file in the BSAX distribution:
         />
     </copy>
 
+    <copy todir="${distsrc.dir}/tests" >
+        <fileset
+            dir="${tests.dir}"  
+            includes="com/**"
+            excludes="**/.svn*, **/.#*, **/*.class"
+        />
+    </copy>
+
+    <copy todir="${distsrc.dir}/tools" >
+        <fileset
+            dir="${tools.dir}"  
+            includes="*"
+            excludes="**/.svn*, **/.#*"
+        />
+    </copy>
+
     <copy file="LICENSE" tofile="${distsrc.dir}/LICENSE"/>
+    <copy file="NOTICE" tofile="${distsrc.dir}/NOTICE"/>
     <copy file="README" tofile="${distsrc.dir}/README"/>
+
     <copy file="build.xml" tofile="${distsrc.dir}/build.xml"/>
+
     <copy file="${basedir}/build.sh" tofile="${distsrc.dir}/build.sh" />
-    <chmod file="${distsrc.dir}/build.sh" perm="ugo+rx" />
+    <chmod file="${distsrc.dir}/build.sh" perm="ug+rx" />
+
     <copy file="${basedir}/build.bat" tofile="${distsrc.dir}/build.bat" />
+
+    <copy file=".classpath" tofile="${distsrc.dir}/.classpath"/>
+    <copy file=".project" tofile="${distsrc.dir}/.project"/>
 
     <zip zipfile="${build.dir}/${package.Name}-src.${package.version}.zip" 
          basedir="${build.dir}"
