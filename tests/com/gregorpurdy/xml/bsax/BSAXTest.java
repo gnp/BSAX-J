@@ -24,10 +24,8 @@ import java.io.InputStream;
 import com.gregorpurdy.xml.bsax.BSAXUtil;
 
 /**
- * @author gregor
- *
- * To change the template for this generated type comment go to
- * Window&gt;Preferences&gt;Java&gt;Code Generation&gt;Code and Comments
+ * @author Gregor N. Purdy &lt;gregor@focusresearch.com&gt; http://www.gregorpurdy.com/gregor
+ * @version $Id$
  */
 public class BSAXTest {
   
