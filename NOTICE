@@ -13,3 +13,8 @@ This file came from the same distribution, but has its own
 LICENSE file:
 
   * tools/xml-apis.jar
+
+This file comes from the JUnit distribution, and has its own
+LICENSE file:
+
+  * tools/junit.jar
