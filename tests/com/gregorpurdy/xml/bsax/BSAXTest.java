@@ -31,9 +31,12 @@ import com.gregorpurdy.xml.bsax.BSAXUtil;
  */
 public class BSAXTest {
   
+  private static final int TRIAL_COUNT = 500;
+  
   public static void main(String[] args) throws Exception {
     String[] files = {
-      "com/gregorpurdy/xml/bsax/personnel.xml"
+      "com/gregorpurdy/xml/bsax/personnel.xml",
+//      "com/gregorpurdy/xml/bsax/book.xml"
     };
     
     for (int i = 0; i < files.length; i++) {
@@ -51,10 +54,14 @@ public class BSAXTest {
       
       byte[] bsaxData = bsaxOutput.toByteArray();
       
-      System.out.println("Dumping BSAX events...");
+//      System.out.println("Dumping BSAX events...");
       
       ByteArrayInputStream bsaxInput = new ByteArrayInputStream(bsaxData);
-      BSAXUtil.dumpBsax(bsaxInput);
+//      BSAXUtil.dumpBsax(bsaxInput);
+      
+      //
+      // Convert back from BSAX to XML:
+      //
       
       System.out.println("Writing " + bsaxData.length + " bytes of BSAX data back out as XML...");
 
@@ -74,9 +81,7 @@ public class BSAXTest {
       //
 
       long xmlStartTime = System.currentTimeMillis();
-      
-      final int TRIAL_COUNT = 1000;
-      
+
       for (int j = 0; j < TRIAL_COUNT; j++) {
         xmlInput = new ByteArrayInputStream(xmlData);
         BSAXUtil.convertXmlToNothing(xmlInput);
@@ -94,7 +99,7 @@ public class BSAXTest {
       
       long bsaxStartTime = System.currentTimeMillis();
       
-      for (int j = 0; j < 1000; j++) {
+      for (int j = 0; j < TRIAL_COUNT; j++) {
         bsaxInput = new ByteArrayInputStream(bsaxData);
         BSAXUtil.convertBsaxToNothing(bsaxInput);
       }
@@ -112,7 +117,6 @@ public class BSAXTest {
       float speedFactor = xmlElapsed / bsaxElapsed;
       
       System.out.println("BSAX processing is " + speedFactor + " times faster than XML parsing for this input.");
-      
     }
   }
   

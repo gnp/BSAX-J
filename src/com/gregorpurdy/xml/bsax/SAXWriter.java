@@ -267,7 +267,7 @@ public class SAXWriter implements ContentHandler {
       throw new SAXException(e);
     }
     
-    BSAXUtil.writeInt(out, BSAXConstants.VERSION);
+    BSAXUtil.writeInt(out, BSAXConstants.VERSION_LATEST);
     BSAXUtil.writeInt(out, BSAXConstants.UNLIMITED_STRING_TABLE_SIZE);
     
     BSAXUtil.writeInt(out, BSAXConstants.OP_START_DOCUMENT);

@@ -26,15 +26,14 @@ import org.xml.sax.ContentHandler;
 import org.xml.sax.DTDHandler;
 import org.xml.sax.EntityResolver;
 import org.xml.sax.ErrorHandler;
-import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXNotRecognizedException;
 import org.xml.sax.SAXNotSupportedException;
 import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.AttributesImpl;
 
+import com.gregorpurdy.xml.bsax.AbstractBSAXReader;
 import com.gregorpurdy.xml.bsax.BSAXConstants;
-import com.gregorpurdy.xml.bsax.BSAXUtil;
 
 /**
  * This class lives in the *.xml.sax package in analogy with
@@ -46,7 +45,7 @@ import com.gregorpurdy.xml.bsax.BSAXUtil;
  *         http://www.gregorpurdy.com/gregor/
  * @version $Id$
  */
-public class BSAXReader implements XMLReader {
+public class BSAXReader extends AbstractBSAXReader implements XMLReader {
   
   private ContentHandler contentHandler;
   
@@ -61,154 +60,144 @@ public class BSAXReader implements XMLReader {
   private InputStream stream = null;
   
   private List stringTable = null;
+
+  //
+  // Used during the processing of a start-element operation:
+  //
   
+  private String elementUriString = null;
+  private String elementLocalNameString = null;
+  private String elementQNameString = null;
+  private AttributesImpl attrs = null; 
+
   /**
    * @param attrs
    * @param i
    * @throws SAXException
    */
-  private void doOpAttribute(AttributesImpl attrs, int i) throws SAXException {
-    String attrUri = readString();
-    String attrLocalName = readString();
-    String attrQName = readString();
-    String attrType = readString();
-    String attrValue = readString();
+  protected void doOpAttribute(int i, int attrUri, int attrLocalName, int attrQName, int attrType, int attrValue) throws SAXException {
+    String attrUriString = getString(attrUri);
+    String attrLocalNameString = getString(attrLocalName);
+    String attrQNameString = getString(attrQName);
+    String attrTypeString = getString(attrType);
+    String attrValueString = getString(attrValue);
     
-    attrs.addAttribute(attrUri, attrLocalName, attrQName, attrType,
-        attrValue);
+    attrs.addAttribute(attrUriString, attrLocalNameString, attrQNameString,
+        attrTypeString, attrValueString);
   }
   
   /**
    * @throws SAXException
    */
-  private void doOpCharacters() throws SAXException {
-    String characters = readString();
+  protected void doOpCharacters(int characters) throws SAXException {
+    String characterString = getString(characters);
     
-    if (characters != null) {
-      contentHandler.characters(characters.toCharArray(), 0, characters.length());
+    if (characterString != null) {
+      contentHandler.characters(characterString.toCharArray(), 0, characterString.length());
     }
   }
   
   /**
    * @throws SAXException
    */
-  private void doOpEndDocument() throws SAXException {
+  protected void doOpEndDocument() throws SAXException {
     contentHandler.endDocument();
   }
   
   /**
    * @throws SAXException
    */
-  private void doOpEndElement() throws SAXException {
-    String uri = readString();
-    String localName = readString();
-    String qName = readString();
+  protected void doOpEndElement(int uri, int localName, int qName) throws SAXException {
+    String uriString = getString(uri);
+    String localNameString = getString(localName);
+    String qNameString = getString(qName);
     
-    contentHandler.endElement(uri, localName, qName);
+    contentHandler.endElement(uriString, localNameString, qNameString);
   }
   
   /**
    * @throws SAXException
    */
-  private void doOpEndPrefixMapping() throws SAXException {
-    String prefix = readString();
+  protected void doOpEndPrefixMapping(int prefix) throws SAXException {
+    String prefixString = getString(prefix);
     
-    contentHandler.endPrefixMapping(prefix);
+    contentHandler.endPrefixMapping(prefixString);
   }
   
   /**
    * @throws SAXException
    */
-  private void doOpIgnorableWhitespace() throws SAXException {
-    String characters = readString();
+  protected void doOpIgnorableWhitespace(int characters) throws SAXException {
+    String characterString = getString(characters);
     
-    contentHandler.ignorableWhitespace(characters.toCharArray(), 0, characters
+    contentHandler.ignorableWhitespace(characterString.toCharArray(), 0, characterString
         .length());
   }
   
   /**
    * @throws SAXException
    */
-  private void doOpProcessingInstruction() throws SAXException {
-    String target = readString();
-    String data = readString();
+  protected void doOpProcessingInstruction(int target, int data) throws SAXException {
+    String targetString = getString(target);
+    String dataString = getString(data);
     
-    contentHandler.processingInstruction(target, data);
+    contentHandler.processingInstruction(targetString, dataString);
   }
   
   /**
    * @throws SAXException
    */
-  private void doOpSkippedEntity() throws SAXException {
-    String name = readString();
+  protected void doOpSkippedEntity(int name) throws SAXException {
+    String nameString = getString(name);
     
-    contentHandler.skippedEntity(name);
+    contentHandler.skippedEntity(nameString);
   }
   
   /**
    * @throws SAXException
    */
-  private void doOpStartDocument() throws SAXException {
+  protected void doOpStartDocument() throws SAXException {
     contentHandler.startDocument();
   }
   
   /**
    * @throws SAXException
    */
-  private void doOpStartElement() throws SAXException {
-    String uri = readString();
-    String localName = readString();
-    String qName = readString();
-    
-    int attributeCount = BSAXUtil.readInt(stream);
-    
-    AttributesImpl attrs = new AttributesImpl();
-    
-    for (int i = 0; i < attributeCount; i++) {
-      int opCode;
-      
-      while ((opCode = BSAXUtil.readInt(stream)) == BSAXConstants.OP_STRING) {
-        doOpString();
-      }
-      
-      if (opCode != BSAXConstants.OP_ATTRIBUTE) {
-        throw new SAXException("Illegal op code " + opCode
-            + " while reading attributes for start-element operation");
-      }
-      
-      doOpAttribute(attrs, i);
-    }
-    
-    contentHandler.startElement(uri, localName, qName, attrs);
+  protected void doOpStartElement(int uri, int localName, int qName, int attributeCount) throws SAXException {
+    elementUriString = getString(uri);
+    elementLocalNameString = getString(localName);
+    elementQNameString = getString(qName);
+
+    attrs = new AttributesImpl();    
   }
   
   /**
    * @throws SAXException
    */
-  private void doOpStartPrefixMapping() throws SAXException {
-    String prefix = readString();
-    String uri = readString();
+  protected void doOpStartElementFinalize() throws SAXException {
+    contentHandler.startElement(elementUriString, elementLocalNameString, elementQNameString, attrs);
+
+    attrs = null;
     
-    contentHandler.startPrefixMapping(prefix, uri);
+    elementUriString = null;
+    elementLocalNameString = null;
+    elementQNameString = null;
   }
   
   /**
    * @throws SAXException
    */
-  private void doOpString() throws SAXException {
-    int stringId = BSAXUtil.readInt(stream);
+  protected void doOpStartPrefixMapping(int prefix, int uri) throws SAXException {
+    String prefixString = getString(prefix);
+    String uriString = getString(uri);
     
-    if (stringId < 2) {
-      throw new SAXException("Cannot modify string table entry 0 or 1");
-    }
-    
-    if ((maxStringTableSize != 0) && (stringId >= maxStringTableSize)) {
-      throw new SAXException(
-          "Cannot create a string table entry beyond the end of the fixed string tables size of "
-          + maxStringTableSize + " for this stream");
-    }
-    
-    String stringValue = BSAXUtil.readString(stream);
+    contentHandler.startPrefixMapping(prefixString, uriString);
+  }
+  
+  /**
+   * @throws SAXException
+   */
+  protected void doOpString(int id, String value) throws SAXException {
     
     //
     // Store the string in the string table. If the table size is
@@ -219,22 +208,22 @@ public class BSAXReader implements XMLReader {
     //
     
     if (maxStringTableSize == BSAXConstants.UNLIMITED_STRING_TABLE_SIZE) {
-      if (stringId < stringTable.size()) {
-        stringTable.set(stringId, stringValue);
+      if (id < stringTable.size()) {
+        stringTable.set(id, value);
       }
-      else if (stringId == stringTable.size()) {
-        stringTable.add(stringValue);
+      else if (id == stringTable.size()) {
+        stringTable.add(value);
       }
       else {
         throw new SAXException("Stream with unlimited string table size attempted to create string entry more than one position beyond the end of the string table");
       }
     }
     else {
-      while (stringId >= stringTable.size()) {
+      while (id >= stringTable.size()) {
         stringTable.add(null);
       }
       
-      stringTable.set(stringId, stringValue);
+      stringTable.set(id, value);
     }
   }
   
@@ -299,120 +288,13 @@ public class BSAXReader implements XMLReader {
    * @throws IOException
    * @throws SAXException
    */
-  public void parse(InputStream stream) throws IOException, SAXException {
-    try {
-      this.stream = stream;
-      
-      //
-      // Check the input stream for the Binary SAX magic pattern:
-      //
-      
-      byte[] magic = BSAXConstants.MAGIC; // Make a copy.
-      
-      if (stream.read(magic) != BSAXConstants.MAGIC.length) {
-        throw new SAXException(
-        "Not enough bytes in the stream to read in a Binary SAX magic byte pattern");
-      }
-      
-      for (int i = 0; i < BSAXConstants.MAGIC.length; i++) {
-        if (magic[i] != BSAXConstants.MAGIC[i]) {
-          throw new SAXException(
-          "Input stream's magic initial bytes don't match the Binary SAX magic byte pattern");
-        }
-      }
-      
-      //
-      // Make sure the version number is a known value:
-      //
-      
-      int version = BSAXUtil.readInt(stream);
-      
-      if (version != BSAXConstants.VERSION) {
-        throw new SAXException("Input stream's Binary SAX version number was "
-            + version + " (expected " + BSAXConstants.VERSION + ")");
-      }
-      
-      //
-      // Make sure the maximum string table size is reasonable:
-      //
-      
-      maxStringTableSize = BSAXUtil.readInt(stream);
-      
-      if ((maxStringTableSize > 0)
-          && (maxStringTableSize < BSAXConstants.MINIMUM_STRING_TABLE_SIZE)) {
-        throw new SAXException(
-            "Maximum string table size must be zero, or at least "
-            + BSAXConstants.MINIMUM_STRING_TABLE_SIZE);
-      }
-      
-      stringTable = new ArrayList(maxStringTableSize);
-      
-      stringTable.add(null); // Index zero
-      stringTable.add(""); // Index one
-      
-      //
-      // Process the stream's opcodes:
-      //
-      
-      while (true) {
-        final boolean allowEof = true;
-        int opCode = BSAXUtil.readInt(stream, allowEof);
-        
-        if (opCode == -1) {
-          break;
-        }
-                
-        if (opCode == BSAXConstants.OP_STRING) {
-          doOpString();
-        } else if (opCode == BSAXConstants.OP_START_DOCUMENT) {
-          doOpStartDocument();
-        } else if (opCode == BSAXConstants.OP_END_DOCUMENT) {
-          doOpEndDocument();
-        } else if (opCode == BSAXConstants.OP_START_ELEMENT) {
-          doOpStartElement();
-        } else if (opCode == BSAXConstants.OP_ATTRIBUTE) {
-          throw new SAXException(
-          "Cannot define an attribute outside a start-element operation");
-        } else if (opCode == BSAXConstants.OP_END_ELEMENT) {
-          doOpEndElement();
-        } else if (opCode == BSAXConstants.OP_CHARACTERS) {
-          doOpCharacters();
-        } else if (opCode == BSAXConstants.OP_IGNORABLE_WHITESPACE) {
-          doOpIgnorableWhitespace();
-        } else if (opCode == BSAXConstants.OP_START_PREFIX_MAPPING) {
-          doOpStartPrefixMapping();
-        } else if (opCode == BSAXConstants.OP_END_PREFIX_MAPPING) {
-          doOpEndPrefixMapping();
-        } else if (opCode == BSAXConstants.OP_PROCESSING_INSTRUCTION) {
-          doOpProcessingInstruction();
-        } else if (opCode == BSAXConstants.OP_SKIPPED_ENTITY) {
-          doOpSkippedEntity();
-        } else {
-          throw new SAXException("Unrecognized Binary SAX opcode " + opCode);
-        }
-      }
-    } finally {
-      this.stream = null;
-    }
+  protected void doStartStream() {
+    stringTable = new ArrayList(maxStringTableSize);
+    
+    stringTable.add(null); // Index zero
+    stringTable.add(""); // Index one
   }
   
-  /*
-   * (non-Javadoc)
-   * 
-   * @see org.xml.sax.XMLReader#parse(org.xml.sax.InputSource)
-   */
-  public void parse(InputSource input) throws IOException, SAXException {
-    parse(input.getByteStream());
-  }
-  
-  /*
-   * (non-Javadoc)
-   * 
-   * @see org.xml.sax.XMLReader#parse(java.lang.String)
-   */
-  public void parse(String systemId) throws IOException, SAXException {
-    parse(new InputSource(systemId));
-  }
   
   /**
    * Reads a string from the stream by reading the string id (index) and then
@@ -421,23 +303,21 @@ public class BSAXReader implements XMLReader {
    * @return
    * @throws SAXException
    */
-  private String readString() throws SAXException {
-    int stringId = BSAXUtil.readInt(stream);
-    
-    if (stringId == 0) {
+  private String getString(int id) throws SAXException {
+    if (id == 0) {
       return null;
-    } else if (stringId == 1) {
+    } else if (id == 1) {
       return "";
     } else if ((maxStringTableSize != BSAXConstants.UNLIMITED_STRING_TABLE_SIZE)
-        && (stringId >= maxStringTableSize)) {
+        && (id >= maxStringTableSize)) {
       throw new SAXException(
       "Illegal reference to string index beyond the end of the fixed-size string table");
-    } else if (stringId >= stringTable.size()) {
+    } else if (id >= stringTable.size()) {
       throw new SAXException(
       "Illegal reference to string index beyond the current end of the variable-size string table");
     }
     
-    return (String) stringTable.get(stringId);
+    return (String) stringTable.get(id);
   }
   
   /*

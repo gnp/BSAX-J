@@ -151,7 +151,7 @@ Copyright:
 
     <javac srcdir="${build.src}"
            destdir="${build.dest}"
-           classpath="${build.dir}/classes:${tools.dir}/${jar.apis}:${tools.dir}/${jar.resolver}"
+           classpath="${build.dest}:tools/resolver.jar:tools/xercesSamples.jar"
            debug="${debug}"
            deprecation="${deprecation}"
            optimize="${optimize}"
@@ -184,14 +184,14 @@ Copyright:
   <!-- =================================================================== -->
   <!-- Compiles the tests                                                  -->
   <!-- =================================================================== -->
-  <target name="test">
+  <target name="test" depends="compile">
     <mkdir dir="${build.tests}"/>
     <copy todir="${build.tests}">
         <fileset dir="${tests.dir}" />
     </copy>
     <javac srcdir="${build.tests}"
            destdir="${build.dest}"
-           classpath="${tools.dir}/${jar.apis}:${build.dir}/classes:./tools/junit.jar"
+           classpath="${build.dest}:tools/junit.jar"
            debug="${debug}"
            includeAntRuntime="false"
            includeJavaRuntime="true"/>
@@ -309,18 +309,18 @@ Copyright:
   <!-- =================================================================== -->
   <target name="sanity" depends="test">
     <echo message="Performing sanity test for ${package.Name} ${package.Version} ..." />
-    <echo message="Using classpath=&apos;${build.dir}/classes&apos;" />
+    <echo message="Using classpath=&apos;${build.dest}&apos;" />
 
     <echo message="Running UTF-8 tester ..." />
     <java fork="yes"
-          classpath="${build.dir}/classes" 
+          classpath="${build.dest}" 
           classname="com.gregorpurdy.codec.UTF8CodecTest"
           failOnError="yes">
     </java>
 
     <echo message="Running Binary SAX tester ..." />
     <java fork="yes"
-          classpath="${build.dir}/classes"
+          classpath="${build.dest}"
           classname="com.gregorpurdy.xml.bsax.BSAXTest"
           failOnError="yes">
        <arg value="${data.dir}/personnel.xml"/>

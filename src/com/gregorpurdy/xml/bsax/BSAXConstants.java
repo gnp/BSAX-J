@@ -25,13 +25,16 @@ public final class BSAXConstants {
 
   public static final byte[] MAGIC = { 0x42, 0x53, 0x41, 0x58 }; // "BSAX" in ASCII
   
-  public static final int VERSION = 1;
+  public static final int VERSION_LATEST = 1;
+  public static final int VERSION_UNKNOWN = 0;
   
   public static final int UNLIMITED_STRING_TABLE_SIZE = 0;
   public static final int MINIMUM_STRING_TABLE_SIZE = 7;
   
   public static final int NULL_STRING_ID = 0;
   public static final int EMPTY_STRING_ID = 1;
+  
+  public static final int STARTING_STRING_TABLE_SIZE = 2;
   
   //
   // Content Handler Operators:
