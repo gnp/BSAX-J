@@ -17,9 +17,9 @@ package com.gregorpurdy.xml.bsax;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -36,44 +36,65 @@ import com.gregorpurdy.xml.sax.BSAXReader;
  * Window&gt;Preferences&gt;Java&gt;Code Generation&gt;Code and Comments
  */
 public class BinarySAXTest {
-
-  public static void main(String[] args) throws SAXException, IOException {
-    String[] args2 = {
-     "/home/gregor/workspace/BSAX/test/com/gregorpurdy/xml/bsax/personnel.xml"
+  
+  public static void main(String[] args) throws Exception {
+    String[] files = {
+      "com/gregorpurdy/xml/bsax/personnel.xml"
     };
     
-    for (int i = 0; i < args2.length; i++) {
-      System.out.println("Reading XML file '" + args2[i] +"' and converting to BSAX...");
-      
-      XMLReader xr = XMLReaderFactory.createXMLReader();
-      
-      ByteArrayOutputStream output = new ByteArrayOutputStream();
-      
-      SAXWriter handler = new SAXWriter(output);
+    for (int i = 0; i < files.length; i++) {
+      System.out.println("Reading XML file '" + files[i] +"' and converting to BSAX...");
 
-      xr.setContentHandler(handler);
-      
-      FileReader r = new FileReader(args2[i]);
-
-      xr.parse(new InputSource(r));
+      byte[] data = convertXmlToBsax(files[i]);
 
       System.out.println("Writing BSAX back out as XML...");
 
-      byte [] data = output.toByteArray();
-      
-      InputStream input = new ByteArrayInputStream(data);
-      
-      BSAXReader reader = new BSAXReader();
-      
-      sax.Writer writer = new sax.Writer();
-      writer.setOutput(System.out, "UTF-8");
-      
-      reader.setContentHandler(writer);
-      
-      reader.parse(input);
+      convertBsaxToXml(data);
+    }
+  }
+
+  /**
+   * @param data
+   * @throws UnsupportedEncodingException
+   * @throws IOException
+   * @throws SAXException
+   */
+  private static void convertBsaxToXml(byte[] data) throws UnsupportedEncodingException, IOException, SAXException {
+    sax.Writer writer = new sax.Writer();
+    writer.setOutput(System.out, "UTF-8");
+
+    BSAXReader reader = new BSAXReader();
+    reader.setContentHandler(writer);
+    reader.setDTDHandler(writer);
+    reader.setEntityResolver(writer);
+    reader.parse(new ByteArrayInputStream(data));
+  }
+
+  /**
+   * @return
+   * @throws SAXException
+   * @throws Exception
+   * @throws IOException
+   */
+  private static byte[] convertXmlToBsax(String resourceName) throws SAXException, Exception, IOException {
+    XMLReader xr = XMLReaderFactory.createXMLReader();
+    ByteArrayOutputStream output = new ByteArrayOutputStream();
+    SAXWriter handler = new SAXWriter(output);
+    
+    xr.setContentHandler(handler);
+    xr.setDTDHandler(handler);
+    xr.setEntityResolver(handler);
+    
+    InputStream stream = ClassLoader.getSystemResourceAsStream(resourceName);
+    
+    if (stream == null) {
+      throw new Exception("Could not locate the input file on the class path!");
     }
     
+    InputSource source = new InputSource(stream);
+    xr.parse(source);
     
+    return output.toByteArray();
   }
   
 }
