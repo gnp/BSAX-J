@@ -208,57 +208,141 @@ public abstract class AbstractBSAXReader {
         if (opCode == -1) {
           break;
         }
-                
-        if (opCode == BSAXConstants.OP_STRING) {
+        
+        if ((opCode < BSAXConstants.MIN_OP) || (opCode > BSAXConstants.MAX_OP)) {
+          throw new SAXException("Unrecognized Binary SAX opcode " + opCode);
+        }
+
+        /*
+        abstract class Op {
+          public abstract void operate();
+        };
+        
+        Op[] ops = new Op[BSAXConstants.MAX_OP];
+        
+        ops[BSAXConstants.OP_STRING] = new Op() { public void operate() { internalOpString(); };
+        };
+        */
+        
+        switch (opCode) {
+        case BSAXConstants.OP_STRING:
           internalOpString();
-        } else if (opCode == BSAXConstants.OP_START_DOCUMENT) {
+          break;
+          
+        case BSAXConstants.OP_START_DOCUMENT:
           doOpStartDocument();
-        } else if (opCode == BSAXConstants.OP_END_DOCUMENT) {
+          break;
+          
+        case BSAXConstants.OP_END_DOCUMENT:
           doOpEndDocument();
-        } else if (opCode == BSAXConstants.OP_START_ELEMENT) {
+          break;
+          
+        case BSAXConstants.OP_START_ELEMENT:
           internalOpStartElement();
-        } else if (opCode == BSAXConstants.OP_ATTRIBUTE) {
+          break;
+          
+        case BSAXConstants.OP_ATTRIBUTE:
           throw new SAXException(
           "Cannot define an attribute outside a start-element operation");
-        } else if (opCode == BSAXConstants.OP_END_ELEMENT) {
-          int uri = readInt();
-          int localName = readInt();
-          int qName = readInt();
           
-          doOpEndElement(uri, localName, qName);
-        } else if (opCode == BSAXConstants.OP_CHARACTERS) {
-          int characters = BSAXUtil.readInt(stream);
+        case BSAXConstants.OP_END_ELEMENT:
+          internalOpEndElement();
+          break;
+          
+        case BSAXConstants.OP_CHARACTERS:
+          internalOpCharacters();
+          break;
+          
+        case BSAXConstants.OP_IGNORABLE_WHITESPACE:
+          internalOpIgnorableWhitespace();
+          break;
+          
+        case BSAXConstants.OP_START_PREFIX_MAPPING:
+          internalOpStartPrefixMapping();
+          break;
+          
+        case BSAXConstants.OP_END_PREFIX_MAPPING:
+          internalOpEndPrefixMapping();
+          break;
+          
+        case BSAXConstants.OP_PROCESSING_INSTRUCTION:
+          internalOpProcessingInstruction();
+          break;
+          
+        case BSAXConstants.OP_SKIPPED_ENTITY:
+          internalOpSkippedEntity();
+          break;
 
-          doOpCharacters(characters);
-        } else if (opCode == BSAXConstants.OP_IGNORABLE_WHITESPACE) {
-          int characters = readInt();
-
-          doOpIgnorableWhitespace(characters);
-        } else if (opCode == BSAXConstants.OP_START_PREFIX_MAPPING) {
-          int prefix = readInt();
-          int uri = readInt();
-          
-          doOpStartPrefixMapping(prefix, uri);
-        } else if (opCode == BSAXConstants.OP_END_PREFIX_MAPPING) {
-          int prefix = readInt();
-          
-          doOpEndPrefixMapping(prefix);
-        } else if (opCode == BSAXConstants.OP_PROCESSING_INSTRUCTION) {
-          int target = readInt();
-          int data = readInt();
-          
-          doOpProcessingInstruction(target, data);
-        } else if (opCode == BSAXConstants.OP_SKIPPED_ENTITY) {
-          int name = readInt();
-
-          doOpSkippedEntity(name);
-        } else {
+        default:
           throw new SAXException("Unrecognized Binary SAX opcode " + opCode);
         }
       }
     } finally {
       this.stream = null;
     }
+  }
+
+  /**
+   * @throws SAXException
+   */
+  private void internalOpSkippedEntity() throws SAXException {
+    int name = readInt();
+    doOpSkippedEntity(name);
+  }
+
+  /**
+   * @throws SAXException
+   */
+  private void internalOpProcessingInstruction() throws SAXException {
+    int target = readInt();
+    int data = readInt();
+    doOpProcessingInstruction(target, data);
+  }
+
+  /**
+   * @throws SAXException
+   */
+  private void internalOpCharacters() throws SAXException {
+    int characters = BSAXUtil.readInt(stream);
+    doOpCharacters(characters);
+  }
+
+  /**
+   * @throws SAXException
+   */
+  private void internalOpEndElement() throws SAXException {
+    int uri = readInt();
+    int localName = readInt();
+    int qName = readInt();
+    doOpEndElement(uri, localName, qName);
+  }
+
+  /**
+   * @param characters
+   * @throws SAXException
+   */
+  private void internalOpIgnorableWhitespace() throws SAXException {
+    int characters = readInt();
+    doOpIgnorableWhitespace(characters);
+  }
+
+  /**
+   * @param uri
+   * @throws SAXException
+   */
+  private void internalOpStartPrefixMapping() throws SAXException {
+    int prefix = readInt();
+    int uri = readInt();
+    doOpStartPrefixMapping(prefix, uri);
+  }
+
+  /**
+   * @param prefix
+   * @throws SAXException
+   */
+  private void internalOpEndPrefixMapping() throws SAXException {
+    int prefix = readInt();
+    doOpEndPrefixMapping(prefix);
   }
 
   /**
