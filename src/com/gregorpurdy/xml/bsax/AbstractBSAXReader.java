@@ -25,9 +25,8 @@ import org.xml.sax.SAXException;
 
 
 /**
- * @author Gregor N. Purdy &lt;gregor@focusresearch.com&gt;
- *         http://www.gregorpurdy.com/gregor/
- * @version $Id: $
+ * @author Gregor N. Purdy &lt;gregor@focusresearch.com&gt; http://www.gregorpurdy.com/gregor/
+ * @version $Id$
  */
 public abstract class AbstractBSAXReader {
   
