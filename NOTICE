@@ -4,6 +4,12 @@ in the tests for this software came from the Xerces-J 2.6.2
 distribution originally:
 
   * tests/com/gregorpurdy/xml/bsax/personnel.xml
-  * tests/sax/helpers/AttributesImpl.java
-  * tests/sax/Writer.java
+  * tools/resolver.jar
+  * tools/xercesImpl.jar
+  * tools/xercesSamples.jar
+  * tools/xmlParserAPIs.jar
+  
+This file came from the same distribution, but has its own
+LICENSE file:
 
+  * tools/xml-apis.jar
