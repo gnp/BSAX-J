@@ -45,9 +45,9 @@ Version tag for this file in the BSAX distribution:
     <property name='package.Name' value='BSAX-J'/>
     <property name='package.name' value='bsax-j'/>
     <property name='package.shortname' value='bsax-j'/>
-    <property name='package.Version' value='1.0.0'/>
-    <property name='package.version' value='1.0.0'/>
-    <property name='package_version' value='1_0_0'/>
+    <property name='package.Version' value='0.8.0'/>
+    <property name='package.version' value='0.8.0'/>
+    <property name='package_version' value='0_8_0'/>
 
     <property name='jar' value='bsax.jar'/>
     
