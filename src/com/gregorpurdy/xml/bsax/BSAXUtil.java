@@ -24,8 +24,12 @@ import java.io.UnsupportedEncodingException;
 
 import com.gregorpurdy.codec.UTF8Codec;
 import com.gregorpurdy.codec.UTF8ParseException;
+import com.gregorpurdy.xml.sax.BSAXReader;
 
+import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
+import org.xml.sax.XMLReader;
+import org.xml.sax.helpers.XMLReaderFactory;
 
 /**
  * @author Gregor N. Purdy &lt;gregor@focusresearch.com&gt; http://www.gregorpurdy.com/gregor
@@ -194,5 +198,35 @@ public class BSAXUtil {
       throw new SAXException(e);
     }
   }
-  
+
+  /**
+   * @param data
+   * @throws UnsupportedEncodingException
+   * @throws IOException
+   * @throws SAXException
+   */
+  public static void convertBsaxToXml(InputStream input, OutputStream output) throws UnsupportedEncodingException, IOException, SAXException {
+    sax.Writer writer = new sax.Writer();
+    writer.setOutput(output, "UTF-8");
+
+    BSAXReader reader = new BSAXReader();
+    reader.setContentHandler(writer);
+    reader.parse(input);
+  }
+
+  /**
+   * @return
+   * @throws SAXException
+   * @throws Exception
+   * @throws IOException
+   */
+  public static void convertXmlToBsax(InputStream input, OutputStream output) throws SAXException, Exception, IOException {
+    XMLReader xr = XMLReaderFactory.createXMLReader();
+    SAXWriter handler = new SAXWriter(output);
+    
+    xr.setContentHandler(handler);
+    
+    InputSource source = new InputSource(input);
+    xr.parse(source);
+  }
 }
