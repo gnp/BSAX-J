@@ -4,11 +4,6 @@
 
 Read the README file for build instruction.
 
-Copied this version from Apache Xerces 2.6.2 source and modified it for
-BSAX:
-
-   %Id: build.xml,v 1.164 2004/02/16 01:04:52 mrglavas Exp %
-
 Authors (original Xerces version):
   Stefano Mazzocchi <stefano@apache.org>
   Anupam Bagchi     <abagchi@apache.org>
@@ -17,9 +12,18 @@ Authors (original Xerces version):
 Author (this version):
   Gregor N. Purdy   <gregor@focusresearch.com>
 
-Copyright:
+Copyright (original Xerces version):
   Copyright (c) 2000-2004 The Apache Software Foundation.
+  
+Copyright (this version):
   Copyright (c) 2005 Gregor N. Purdy. All rights reserved.
+
+Copied this version from Apache Xerces 2.6.2 source and modified it for
+BSAX:
+
+   %Id: build.xml,v 1.164 2004/02/16 01:04:52 mrglavas Exp %
+
+Version tag for this file in the BSAX distribution:
 
    $Id$
 
