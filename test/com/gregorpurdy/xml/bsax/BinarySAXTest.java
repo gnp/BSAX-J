@@ -24,7 +24,7 @@ public class BinarySAXTest {
 
   public static void main(String[] args) throws SAXException, IOException {
     String[] args2 = {
-     "/home/gregor/workspace/BinaryXML/test/com/gregorpurdy/xml/bsax/personnel.xml"
+     "/home/gregor/workspace/BSAX/test/com/gregorpurdy/xml/bsax/personnel.xml"
     };
     
     for (int i = 0; i < args2.length; i++) {
