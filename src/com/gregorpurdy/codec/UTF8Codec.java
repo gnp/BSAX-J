@@ -208,8 +208,6 @@ public class UTF8Codec {
   private static final int MIN_ENCODED_LENGTH = 1;
   private static final int MAX_ENCODED_LENGTH = 6;
   
-  private static final byte INVALID_MASK = (byte)0xff;
-  
   public static int lengthFromInitialByte(final byte initialByte)
     throws UTF8ParseException
   {
