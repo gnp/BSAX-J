@@ -9,5 +9,7 @@
 	<classpathentry kind="lib" path="tools/resolver.jar"/>
 	<classpathentry kind="lib" path="tools/xmlParserAPIs.jar"/>
 	<classpathentry kind="lib" path="tools/junit.jar"/>
+	<classpathentry kind="lib" path="tools/ant.jar"/>
+	<classpathentry kind="lib" path="tools/ant-launcher.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
