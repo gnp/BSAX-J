@@ -40,7 +40,9 @@ public final class BSAXConstants {
   // Content Handler Operators:
   //
   
-  public static final int OP_STRING = 0; // int for length + utf-8 encoded string
+  public static final int MIN_OP = 0;
+  
+  public static final int OP_STRING = 0; // int for id, int for length + utf-8 encoded string
   public static final int OP_START_DOCUMENT = 1; // NO ARGS
   public static final int OP_END_DOCUMENT = 2; // NO ARGS
   public static final int OP_START_ELEMENT = 3; // 4 args: uri, localName, qName, #attrs (5 each)
@@ -52,6 +54,8 @@ public final class BSAXConstants {
   public static final int OP_END_PREFIX_MAPPING = 9; // 1 arg: prefix
   public static final int OP_PROCESSING_INSTRUCTION = 10; // 2 args: target, data
   public static final int OP_SKIPPED_ENTITY = 11; // 1 arg: name
+  
+  public static final int MAX_OP = 11;
   
   private BSAXConstants() { }
   
