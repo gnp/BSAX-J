@@ -37,9 +37,9 @@ Copyright:
   <property name='copyright.holder' value='Gregor N. Purdy'/>
 
   <target name="init">
-    <property name='package.Name' value='BSAX'/>
-    <property name='package.name' value='bsax'/>
-    <property name='package.shortname' value='bsax'/>
+    <property name='package.Name' value='BSAX-J'/>
+    <property name='package.name' value='bsax-j'/>
+    <property name='package.shortname' value='bsax-j'/>
     <property name='package.Version' value='1.0.0'/>
     <property name='package.version' value='1.0.0'/>
     <property name='package_version' value='1_0_0'/>
@@ -56,7 +56,8 @@ Copyright:
     <property name="deprecation" value="off"/>
 
     <property name="src.dir" value="./src"/>
-    <property name="test.dir" value="./test"/>
+    <property name="tests.dir" value="./tests"/>
+    <property name="samples.dir" value="./samples"/>
 
     <property name="packages" value="com.gregorpurdy.*"/>
 
@@ -64,7 +65,8 @@ Copyright:
     <property name="build.src" value="${build.dir}/src"/>
     <property name="build.dest" value="${build.dir}/classes"/>
     <property name="build.docs" value="${build.dir}/docs"/>
-    <property name="build.test" value="${build.dir}/test"/>
+    <property name="build.samples" value="${build.dir}/samples"/>
+    <property name="build.tests" value="${build.dir}/tests"/>
     <property name="build.javadocs" value="${build.dir}/docs/javadocs"/>
 
     <property name="distsrc.dir" value="${build.dir}/${package.shortname}-${package_version}"/>
@@ -93,7 +95,7 @@ Copyright:
     <echo message=" jar      --> generates the bsax.jar file"/>
     <echo message=" javadocs --> generates the API docs (needs Java 1.2 or higher)"/>
     <echo message=" compile  --> compiles the source code"/>
-    <echo message=" test     --> compiles the test source code"/>
+    <echo message=" samples  --> compiles the sample source code"/>
     <echo message=" pack-src --> generates the source distributions (zip and tar.gz)"/>
     <echo message=" pack-bin --> generates the binary distributions (zip and tar.gz)"/>
     <echo message=" all      --> generates the binary, source and tools distributions"/>
@@ -183,11 +185,11 @@ Copyright:
   <!-- Compiles the tests                                                  -->
   <!-- =================================================================== -->
   <target name="test">
-    <mkdir dir="${build.test}"/>
-    <copy todir="${build.test}">
-        <fileset dir="${test.dir}" />
+    <mkdir dir="${build.tests}"/>
+    <copy todir="${build.tests}">
+        <fileset dir="${tests.dir}" />
     </copy>
-    <javac srcdir="${build.test}"
+    <javac srcdir="${build.tests}"
            destdir="${build.dest}"
            classpath="${tools.dir}/${jar.apis}:${build.dir}/classes:./tools/junit.jar"
            debug="${debug}"
