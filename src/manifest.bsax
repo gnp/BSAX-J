@@ -1,0 +1,22 @@
+Manifest-Version: 1.0
+Created-By: @java.version@ (@java.vendor@)
+
+Name: com/gregorpurdy/codec/
+Comment: UTF-8 Full Six Byte Encoding
+Specification-Title: [RFC-2279] UTF-8, a transformation format of ISO 10646
+Specification-Vendor: The Internet Society
+Specification-Version: January 1998
+Implementation-Title: com.gregorpurdy.codec
+Implementation-Version: 1.0.0
+Implementation-Vendor: Gregor N. purdy
+Implementation-URL: http://www.gregorpurdy.com/gregor/sw/bsax/
+
+Name: com/gregorpurdy/xml/
+Comment: Binary encoded SAX events
+Specification-Title: Binary Encoding for SAX Events
+Specification-Vendor: Gregor N. Purdy
+Specification-Version: 1.0.0
+Implementation-Title: com.gregorpurdy.xml
+Implementation-Version: 1.0.0
+Implementation-Vendor: Gregor N. purdy
+Implementation-URL: http://www.gregorpurdy.com/gregor/sw/bsax/

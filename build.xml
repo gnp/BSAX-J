@@ -1,0 +1,341 @@
+<?xml version="1.0"?>
+
+<!-- ===================================================================
+
+Read the README file for build instruction.
+
+Copied this version from Apache Xerces 2.6.2 source and modified it for
+BSAX:
+
+   %Id: build.xml,v 1.164 2004/02/16 01:04:52 mrglavas Exp %
+
+Authors (original Xerces version):
+  Stefano Mazzocchi <stefano@apache.org>
+  Anupam Bagchi     <abagchi@apache.org>
+  Andy Clark, IBM
+
+Author (this version):
+  Gregor N. Purdy   <gregor@focusresearch.com>
+
+Copyright:
+  Copyright (c) 2000-2005 The Apache Software Foundation.
+
+   $Id: $
+
+==================================================================== -->
+
+<project default="usage" basedir=".">
+
+  <!-- Allow properties following these statements to be overridden -->
+  <!-- Note that all of these don't have to exist.  They've just been defined
+       incase they are used. -->
+  <property file="build.properties"/>
+  <property file=".ant.properties"/>
+  <property file="${user.home}/.ant.properties"/>
+  <property file="default.properties"/>  
+
+  <property name='copyright.holder' value='Gregor N. Purdy'/>
+
+  <target name="init">
+    <property name='package.Name' value='BSAX'/>
+    <property name='package.name' value='bsax'/>
+    <property name='package.shortname' value='bsax'/>
+    <property name='package.Version' value='1.0.0'/>
+    <property name='package.version' value='1.0.0'/>
+    <property name='package_version' value='1_0_0'/>
+
+    <property name='jar' value='bsax.jar'/>
+    
+    <property name="year" value="1999-2005"/>
+    <property name="copyright" value="Copyright &#169; ${year} ${copyright.holder}. All Rights Reserved."/>
+
+    <echo message= "---------------- ${package.Name} ${package.Version} [${year}] ---------------"/>
+
+    <property name="debug" value="off"/>
+    <property name="optimize" value="on"/>
+    <property name="deprecation" value="off"/>
+
+    <property name="src.dir" value="./src"/>
+    <property name="test.dir" value="./test"/>
+
+    <property name="packages" value="com.gregorpurdy.*"/>
+
+    <property name="build.dir" value="./build"/>
+    <property name="build.src" value="${build.dir}/src"/>
+    <property name="build.dest" value="${build.dir}/classes"/>
+    <property name="build.docs" value="${build.dir}/docs"/>
+    <property name="build.test" value="${build.dir}/test"/>
+    <property name="build.javadocs" value="${build.dir}/docs/javadocs"/>
+
+    <property name="distsrc.dir" value="${build.dir}/${package.shortname}-${package_version}"/>
+    <property name="distbin.dir" value="${build.dir}/${package.shortname}-${package_version}"/>
+
+    <filter token="year" value="${year}"/>
+    <filter token="version" value="${package.Version}"/>
+    <filter token="date" value="${TODAY}"/>
+    <filter token="log" value="true"/>
+    <filter token="verbose" value="true"/>
+
+  </target>
+
+  <!-- =================================================================== -->
+  <!-- Help on usage                                                       -->
+  <!-- =================================================================== -->
+  <target name="usage" depends="init">
+    <echo message=""/>
+    <echo message=""/>
+    <echo message="${package.Name} Build instructions"/>
+    <echo message="-------------------------------------------------------------"/>
+    <echo message=""/>
+    <echo message=" available targets are:"/>
+    <echo message=""/>
+    
+    <echo message=" jar      --> generates the bsax.jar file"/>
+    <echo message=" javadocs --> generates the API docs (needs Java 1.2 or higher)"/>
+    <echo message=" compile  --> compiles the source code"/>
+    <echo message=" test     --> compiles the test source code"/>
+    <echo message=" pack-src --> generates the source distributions (zip and tar.gz)"/>
+    <echo message=" pack-bin --> generates the binary distributions (zip and tar.gz)"/>
+    <echo message=" all      --> generates the binary, source and tools distributions"/>
+    <echo message=" test     --> runs a sanity test on the sample files"/>
+    <echo message=" clean    --> cleans up all generated files and directories"/>
+    <echo message=" usage    --> provides help on using the build tool (default)"/>
+    <echo message=""/>
+    <echo message=" See comments inside the build.xml file for more details."/>
+    <echo message="-------------------------------------------------------------"/>
+    <echo message=""/>
+    <echo message=""/>
+  </target>
+
+  <!-- =================================================================== -->
+  <!-- Prepares the build directory                                        -->
+  <!-- =================================================================== -->
+  <target name="prepare" depends="init">
+    <mkdir dir="${build.dir}"/>
+  </target>
+
+  <!-- =================================================================== -->
+  <!-- directory creation and file copying common to all configurations    -->
+  <!-- =================================================================== -->
+  <target name="prepare-common" depends="prepare">
+    <!-- create directories -->
+    <mkdir dir="${build.src}"/>
+    <mkdir dir="${build.dest}"/>
+    <mkdir dir="${build.dest}/META-INF"/>
+  </target>
+
+  <!-- =================================================================== -->
+  <!-- Prepares the source code                                            -->
+  <!-- =================================================================== -->
+  <target name="prepare-src" depends="prepare-common">
+    <copy todir="${build.src}">
+        <fileset 
+            dir="${src.dir}"
+            includes="com/gregorpurdy/**"
+            excludes="**/.svn* **/.#*">
+        </fileset>
+    </copy>
+  </target>
+
+  <!-- =================================================================== -->
+  <!-- Compiles the source directory                                       -->
+  <!-- =================================================================== -->
+  <target name="compile" depends="prepare-src">
+    <copy todir="${build.dest}">
+      <fileset dir="${build.src}"
+        includes="**/*.res, **/*.properties">
+      </fileset>
+    </copy>
+
+    <javac srcdir="${build.src}"
+           destdir="${build.dest}"
+           classpath="${build.dir}/classes:${tools.dir}/${jar.apis}:${tools.dir}/${jar.resolver}"
+           debug="${debug}"
+           deprecation="${deprecation}"
+           optimize="${optimize}"
+           includeAntRuntime="false"
+           includeJavaRuntime="false"
+           />
+  </target>
+
+  <!-- =================================================================== -->
+  <!-- Creates the implementation class package, excluding DOM Level 3     -->
+  <!-- =================================================================== -->
+  <target name="jar" depends="compile">
+    <!-- take care of manifest file -->
+    <filter token="java.version" value="${java.version}"/>
+    <filter token="java.vendor" value="${java.vendor}"/>
+    <filter token="impl.name" value="${package.Name} ${package.Version}"/>
+    <filter token="impl.version" value="${package.Version}"/>   
+    <copy todir="${build.dir}" file="${src.dir}/manifest.bsax" filtering="true"/>
+    <jar jarfile="${build.dir}/${jar}"
+         basedir="${build.dest}"
+         compress="true"
+         includes="com/gregorpurdy/**, META-INF/**"
+         manifest="${build.dir}/manifest.bsax">
+      <manifest>
+        <attribute name="Ant-Version" value="${ant.version}"/>
+      </manifest>
+    </jar>
+  </target>
+
+  <!-- =================================================================== -->
+  <!-- Compiles the tests                                                  -->
+  <!-- =================================================================== -->
+  <target name="test">
+    <mkdir dir="${build.test}"/>
+    <copy todir="${build.test}">
+        <fileset dir="${test.dir}" />
+    </copy>
+    <javac srcdir="${build.test}"
+           destdir="${build.dest}"
+           classpath="${tools.dir}/${jar.apis}:${build.dir}/classes:./tools/junit.jar"
+           debug="${debug}"
+           includeAntRuntime="false"
+           includeJavaRuntime="true"/>
+  </target>
+
+  <!-- =================================================================== -->
+  <!-- Creates the API documentation                                       -->
+  <!-- =================================================================== -->
+  <target name="javadocs" depends="prepare-src">
+    <mkdir dir='${build.dir}/docs/javadocs/codec'/>
+    <javadoc packagenames='com.gregorpurdy.codec'
+      locale='en_US'
+      sourcepath='${build.src}' destdir='${build.dir}/docs/javadocs/codec'
+      author='true' version='true'
+      windowtitle='Codecs' 
+      doctitle='Codecs'
+      bottom='${copyright}'
+      />
+ 
+    <mkdir dir='${build.dir}/docs/javadocs/bsax'/>
+    <javadoc packagenames='com.gregorpurdy.xml.sax, com.gregorpurdy.xml.bsax'
+     locale='en_US'
+     sourcepath='${build.src}' destdir='${build.dir}/docs/javadocs/bsax'
+     author='true' version='true'
+     windowtitle='Binary SAX' doctitle='Binary SAX'
+     bottom='${copyright}'
+     />
+  </target>
+
+  <!-- =================================================================== -->
+  <!-- Prepares the source distribution                                    -->
+  <!-- =================================================================== -->
+  <target name="pack-src" depends="init">
+    <echo message="Building the source distribution files (zip,tar)"/>
+    <delete dir="${distbin.dir}"/>
+
+    <mkdir dir="${distsrc.dir}"/>
+    <mkdir dir="${distsrc.dir}/src"/>
+
+    <copy todir="${distsrc.dir}/src" >
+        <fileset
+            dir="${src.dir}"  
+            includes="com/**, manifest.bsax"
+            excludes="**/.svn*, **/.#*, **/*.class"
+        />
+    </copy>
+
+    <copy file="LICENSE" tofile="${distsrc.dir}/LICENSE"/>
+    <copy file="README" tofile="${distsrc.dir}/README"/>
+    <copy file="build.xml" tofile="${distsrc.dir}/build.xml"/>
+    <copy file="${basedir}/build.sh" tofile="${distsrc.dir}/build.sh" />
+    <chmod file="${distsrc.dir}/build.sh" perm="ugo+rx" />
+    <copy file="${basedir}/build.bat" tofile="${distsrc.dir}/build.bat" />
+
+    <zip zipfile="${build.dir}/${package.Name}-src.${package.version}.zip" 
+         basedir="${build.dir}"
+         includes="${package.shortname}-${package_version}/**" excludes="*.class"/>
+
+    <tar tarfile="${build.dir}/${package.Name}-src.${package.version}.tar" 
+         basedir="${build.dir}"
+         includes="${package.shortname}-${package_version}/**" excludes="*.class"/>
+    <gzip zipfile="${build.dir}/${package.Name}-src.${package.version}.tar.gz"
+          src="${build.dir}/${package.Name}-src.${package.version}.tar" />
+    <!-- and why not get rid of the un-gzip'd tarball and save ourselves 15 Mb? -->
+    <delete file="${build.dir}/${package.Name}-src.${package.version}.tar"/>
+  </target>
+
+  <!-- =================================================================== -->
+  <!-- Prepares common parts of the binary distributions                   -->
+  <!-- =================================================================== -->
+  <target name="pack-bin-common" depends="javadocs">
+
+    <echo message="Building the binary distribution files (zip,tar)"/>
+    <delete dir="${distbin.dir}"/>
+    <mkdir dir="${distbin.dir}"/>
+    <mkdir dir="${distbin.dir}/docs"/>
+    <mkdir dir="${distbin.dir}/docs/javadocs"/>
+
+    <copy todir="${distbin.dir}/docs" >
+        <fileset dir="${build.docs}" />
+    </copy>
+
+    <copy todir="${distbin.dir}/docs/javadocs/codec" >
+        <fileset dir="${build.dir}/docs/javadocs/codec" />
+    </copy>
+    <copy todir="${distbin.dir}/docs/javadocs/bsax" >
+        <fileset dir="${build.dir}/docs/javadocs/bsax" />
+    </copy>
+
+    <copy file="LICENSE" tofile="${distbin.dir}/LICENSE"/>
+  </target>
+
+  <!-- =================================================================== -->
+  <!-- Prepares the binary distribution                                    -->
+  <!-- =================================================================== -->
+  <target name="pack-bin" depends="pack-bin-common, jar">
+    <copy file="${build.dir}/${jar}" tofile="${distbin.dir}/${jar}"/>
+
+    <zip zipfile="${build.dir}/${package.Name}-bin.${package.version}.zip" 
+         basedir="${build.dir}"
+         includes="${package.shortname}-${package_version}/**" 
+         excludes="*.class"/>
+    <tar tarfile="${build.dir}/${package.Name}-bin.${package.version}.tar" 
+         basedir="${build.dir}"
+         includes="${package.shortname}-${package_version}/**" 
+         excludes="*.class"/>
+    <gzip zipfile="${build.dir}/${package.Name}-bin.${package.version}.tar.gz"
+          src="${build.dir}/${package.Name}-bin.${package.version}.tar" />
+    <!-- as before, let's kill of the ungzip'd tarball! -->
+    <delete file="${build.dir}/${package.Name}-bin.${package.version}.tar"/>
+  </target>
+
+  <!-- =================================================================== -->
+  <!-- Do a sanity test using samples                                      -->
+  <!-- =================================================================== -->
+  <target name="sanity" depends="test">
+    <echo message="Performing sanity test for ${package.Name} ${package.Version} ..." />
+    <echo message="Using classpath=&apos;${build.dir}/classes&apos;" />
+
+    <echo message="Running UTF-8 tester ..." />
+    <java fork="yes"
+          classpath="${build.dir}/classes" 
+          classname="com.gregorpurdy.codec.UTF8CodecTest"
+          failOnError="yes">
+    </java>
+
+    <echo message="Running Binary SAX tester ..." />
+    <java fork="yes"
+          classpath="${build.dir}/classes"
+          classname="com.gregorpurdy.xml.bsax.BSAXTest"
+          failOnError="yes">
+       <arg value="${data.dir}/personnel.xml"/>
+    </java>
+  </target>
+
+  <!-- =================================================================== -->
+  <!-- Builds and packages sources and binary distributions                -->
+  <!-- =================================================================== -->
+  <target name="all" depends="pack-bin, pack-src">
+  </target>
+
+  <!-- =================================================================== -->
+  <!-- Cleans everything                                                   -->
+  <!-- =================================================================== -->
+  <target name="clean" depends="init">
+    <delete dir="${build.dir}"/>
+  </target>
+
+</project>

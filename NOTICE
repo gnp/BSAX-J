@@ -1,0 +1,9 @@
+This product includes software developed by The Apache Software
+Foundation (http://www.apache.org/). The following files used
+in the tests for this software came from the Xerces-J 2.6.2
+distribution originally:
+
+  * tests/com/gregorpurdy/xml/bsax/personnel.xml
+  * tests/sax/helpers/AttributesImpl.java
+  * tests/sax/Writer.java
+

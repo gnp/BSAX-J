@@ -1,5 +1,7 @@
 /*
- *  Copyright 2005 Gregor N. Purdy
+ * BSAXTest.java
+ * 
+ *  Copyright 2005 Gregor N. Purdy. All rights reserved.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -35,7 +37,7 @@ import com.gregorpurdy.xml.sax.BSAXReader;
  * To change the template for this generated type comment go to
  * Window&gt;Preferences&gt;Java&gt;Code Generation&gt;Code and Comments
  */
-public class BinarySAXTest {
+public class BSAXTest {
   
   public static void main(String[] args) throws Exception {
     String[] files = {
