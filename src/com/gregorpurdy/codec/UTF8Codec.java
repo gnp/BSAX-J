@@ -16,13 +16,19 @@
 package com.gregorpurdy.codec;
 
 /**
- * This class implements an UTF-8 transcoder per the description
+ * This class implements an UTF-8 codec per the description
  * given in Section 2 of RFC 2279 (also ISO/IEC 10646). RFC 3629
  * and The Unicode Standard 4.0, section 3.9 define the output of
  * UTF-8 encoding as 1-4 bytes, leaving off the extensions that
  * let the encoding cover the full 31-bit unsigned integer range
  * that the encoding can naturally cover if you follow the scheme
  * to its natural conclusion.
+ * 
+ * There are other implementations of the UTF-8 scheme, including
+ * one built in to Java, but the Java version is the 1-4 byte
+ * version, and also encodes the byte value 0x00 as {0xc0, 0x80},
+ * which is illegal per the true UTF-8 rules (this case is explicitly
+ * tested in the test suite for this class).
  * 
  * 32-bit integer                       1st Byte 2nd Byte 3rd Byte 4th Byte 5th Byte 6th Byte
  * -----------------------------------  -------- -------- -------- -------- -------- --------
