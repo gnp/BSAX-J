@@ -19,7 +19,7 @@ package com.gregorpurdy.xml.bsax;
 
 /**
  * @author Gregor N. Purdy &lt;gregor@focusresearch.com&gt; http://www.gregorpurdy.com/gregor
- * @version $Id; $
+ * @version $Id$
  */
 public final class BSAXConstants {
 
