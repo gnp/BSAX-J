@@ -41,8 +41,7 @@ import com.gregorpurdy.xml.bsax.BSAXConstants;
  * SAX events. What it reads as input is in the class name, and
  * what it produces as output is in the package name.
  * 
- * @author Gregor N. Purdy &lt;gregor@focusresearch.com&gt;
- *         http://www.gregorpurdy.com/gregor/
+ * @author Gregor N. Purdy &lt;gregor@focusresearch.com&gt; http://www.gregorpurdy.com/gregor/
  * @version $Id$
  */
 public class BSAXReader extends AbstractBSAXReader implements XMLReader {
