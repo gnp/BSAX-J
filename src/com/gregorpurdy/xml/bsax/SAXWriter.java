@@ -30,16 +30,8 @@ import org.xml.sax.helpers.DefaultHandler;
 /**
  * This class lives in the *.xml.bsax package in analogy with
  * the org.xml.sax.XMLReader class, which reads XML and produces
- * SAX events. What it reads as input is in the class name, and
+ * SAX events: what it reads as input is in the class name, and
  * what it produces as output is in the package name.
- * 
- * For reading later, we could use:
- * 
- *   java.io.InputStreamReader x;
- *   int op = x.read();
- * 
- * to read a UTF-8 encoded integer back out.
- *
  * 
  * @author Gregor N. Purdy &lt;gregor@focusresearch.com&gt;, http://www.gregorpurdy.com/gregor
  * @version $Id$
