@@ -25,6 +25,7 @@ import java.io.UnsupportedEncodingException;
 import com.gregorpurdy.codec.UTF8Codec;
 import com.gregorpurdy.codec.UTF8ParseException;
 import com.gregorpurdy.xml.sax.BSAXReader;
+import com.gregorpurdy.xml.sax.SAXSink;
 
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -215,6 +216,28 @@ public class BSAXUtil {
   }
 
   /**
+   * @param input
+   * @throws IOException
+   * @throws SAXException
+   */
+  public static void convertBsaxToNothing(InputStream input) throws IOException, SAXException
+  {
+    SAXSink contentHandler = new SAXSink();
+
+    BSAXReader reader = new BSAXReader();
+    reader.setContentHandler(contentHandler);
+    reader.parse(input);
+  }
+  
+  /**
+   * @param input
+   */
+  public static void dumpBsax(InputStream input) throws IOException, SAXException {
+    BSAXDumper dumper = new BSAXDumper();
+    dumper.parse(input);    
+  }
+  
+  /**
    * @return
    * @throws SAXException
    * @throws Exception
@@ -222,11 +245,27 @@ public class BSAXUtil {
    */
   public static void convertXmlToBsax(InputStream input, OutputStream output) throws SAXException, Exception, IOException {
     XMLReader xr = XMLReaderFactory.createXMLReader();
-    SAXWriter handler = new SAXWriter(output);
+    SAXWriter contentHandler = new SAXWriter(output);
     
-    xr.setContentHandler(handler);
+    xr.setContentHandler(contentHandler);
     
     InputSource source = new InputSource(input);
     xr.parse(source);
   }
+  
+  /**
+   * @param input
+   * @throws IOException
+   * @throws SAXException
+   */
+  public static void convertXmlToNothing(InputStream input) throws IOException, SAXException {
+    XMLReader xr = XMLReaderFactory.createXMLReader();
+    SAXSink contentHandler = new SAXSink();
+    
+    xr.setContentHandler(contentHandler);
+    
+    InputSource source = new InputSource(input);
+    xr.parse(source);
+  }
+  
 }

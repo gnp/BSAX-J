@@ -20,7 +20,6 @@ package com.gregorpurdy.xml.bsax;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
-import java.io.OutputStream;
 
 import com.gregorpurdy.xml.bsax.BSAXUtil;
 
@@ -50,14 +49,70 @@ public class BSAXTest {
       
       BSAXUtil.convertXmlToBsax(xmlInput, bsaxOutput);
       
-      byte[] data = bsaxOutput.toByteArray();
+      byte[] bsaxData = bsaxOutput.toByteArray();
       
-      System.out.println("Writing BSAX back out as XML...");
+      System.out.println("Dumping BSAX events...");
+      
+      ByteArrayInputStream bsaxInput = new ByteArrayInputStream(bsaxData);
+      BSAXUtil.dumpBsax(bsaxInput);
+      
+      System.out.println("Writing " + bsaxData.length + " bytes of BSAX data back out as XML...");
 
-      ByteArrayInputStream bsaxInput = new ByteArrayInputStream(data);
-      OutputStream xmlOutput = System.out;
+      bsaxInput = new ByteArrayInputStream(bsaxData);
+      ByteArrayOutputStream xmlOutput = new ByteArrayOutputStream();
       
       BSAXUtil.convertBsaxToXml(bsaxInput, xmlOutput);
+
+      byte[] xmlData = xmlOutput.toByteArray();
+      
+      float sizeFactor = 100.0f * (float)bsaxData.length / (float)xmlData.length;
+      
+      System.out.println("Wrote " + xmlData.length + " bytes of XML data out based on " + bsaxData.length + " bytes of BSAX data (BSAX is " + sizeFactor + "% the size of the XML data).");
+      
+      //
+      // Benchmark the XML parser method:
+      //
+
+      long xmlStartTime = System.currentTimeMillis();
+      
+      final int TRIAL_COUNT = 1000;
+      
+      for (int j = 0; j < TRIAL_COUNT; j++) {
+        xmlInput = new ByteArrayInputStream(xmlData);
+        BSAXUtil.convertXmlToNothing(xmlInput);
+      }
+      
+      long xmlEndTime = System.currentTimeMillis();
+      
+      float xmlElapsed = (xmlEndTime - xmlStartTime) / 1000.0f;
+
+      System.out.println("It took " + xmlElapsed + " seconds to process " + TRIAL_COUNT + " XML streams.");      
+      
+      //
+      // Benchmark the BSAX method:
+      //
+      
+      long bsaxStartTime = System.currentTimeMillis();
+      
+      for (int j = 0; j < 1000; j++) {
+        bsaxInput = new ByteArrayInputStream(bsaxData);
+        BSAXUtil.convertBsaxToNothing(bsaxInput);
+      }
+      
+      long bsaxEndTime = System.currentTimeMillis();
+
+      float bsaxElapsed = (bsaxEndTime - bsaxStartTime) / 1000.0f;
+      
+      System.out.println("It took " + bsaxElapsed + " seconds to process " + TRIAL_COUNT + " BSAX streams.");
+      
+      //
+      // Show the final result:
+      //
+      
+      float speedFactor = xmlElapsed / bsaxElapsed;
+      
+      System.out.println("BSAX processing is " + speedFactor + " times faster than XML parsing for this input.");
+      
     }
   }
   
