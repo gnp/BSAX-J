@@ -65,8 +65,6 @@ public class BinarySAXTest {
 
     BSAXReader reader = new BSAXReader();
     reader.setContentHandler(writer);
-    reader.setDTDHandler(writer);
-    reader.setEntityResolver(writer);
     reader.parse(new ByteArrayInputStream(data));
   }
 
@@ -82,8 +80,6 @@ public class BinarySAXTest {
     SAXWriter handler = new SAXWriter(output);
     
     xr.setContentHandler(handler);
-    xr.setDTDHandler(handler);
-    xr.setEntityResolver(handler);
     
     InputStream stream = ClassLoader.getSystemResourceAsStream(resourceName);
     

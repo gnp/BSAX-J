@@ -21,10 +21,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.xml.sax.Attributes;
+import org.xml.sax.ContentHandler;
 import org.xml.sax.InputSource;
 import org.xml.sax.Locator;
 import org.xml.sax.SAXException;
-import org.xml.sax.helpers.DefaultHandler;
 
 
 /**
@@ -36,7 +36,7 @@ import org.xml.sax.helpers.DefaultHandler;
  * @author Gregor N. Purdy &lt;gregor@focusresearch.com&gt;, http://www.gregorpurdy.com/gregor
  * @version $Id$
  */
-public class SAXWriter extends DefaultHandler {
+public class SAXWriter implements ContentHandler {
   
   /**
    * @param out
@@ -155,7 +155,8 @@ public class SAXWriter extends DefaultHandler {
    * the attribute operator used as part of the start element operator),
    * and index zero is for null and index one is for empty string.
    * 
-   * TODO: Subclasses should implement the various policies.
+   * TODO: Subclasses should implement the various policies, or alternatively
+   * policy implementations that are plugged into this one tru reader class.
    * 
    * @param string The string to find the id (index) for.
    * @return The integer id (index) for the string.
@@ -199,27 +200,26 @@ public class SAXWriter extends DefaultHandler {
   /**
    * Get ready to process a new input.
    * 
-   * TODO: Should we have one with a starting string table? It could be derived
-   * automatically from a DTD or schema...
+   * TODO: Should we have an init method with a starting string table?
+   * It could be derived automatically from a DTD or schema. You'd have
+   * to store the MD5 sum of the initial table in the byte stream and
+   * compare it at reading time to the same signature for the starting
+   * strings at the reader. If the stream was encoded with a different
+   * set of strings than we have at the time of decoding, we'd have to
+   * throw an exception.
+   * 
+   * Such a feature would be useful for cases where there is a well-
+   * defined but large set of strings one expects to encounter over
+   * many documents exchanged over a transport. In these cases, there
+   * would be no sense in resending the large string table with each
+   * individual document. It may also help in some low-end enviroments
+   * to have that string table pre-agreed to and compiled in to the
+   * reader (such as with low cost set-top-boxes reading program data
+   * about show start and end times).
    */
   public void init() {
     stringMap.clear();
     nextStringId = 1;
-  }
-  
-  /* (non-Javadoc)
-   * @see org.xml.sax.DTDHandler#notationDecl(java.lang.String, java.lang.String, java.lang.String)
-   */
-  public void notationDecl(String name, String publicId, String systemId)
-  throws SAXException {
-    int nameId = getStringId(name);
-    int publicIdId = getStringId(publicId);
-    int systemIdId = getStringId(systemId);
-    
-    BSAXUtil.writeInt(out, BSAXConstants.OP_NOTATION_DECL);
-    BSAXUtil.writeInt(out, nameId);
-    BSAXUtil.writeInt(out, publicIdId);
-    BSAXUtil.writeInt(out, systemIdId);
   }
   
   /* (non-Javadoc)
@@ -236,23 +236,6 @@ public class SAXWriter extends DefaultHandler {
   }
   
   /* (non-Javadoc)
-   * @see org.xml.sax.EntityResolver#resolveEntity(java.lang.String, java.lang.String)
-   */
-  public InputSource resolveEntity(String publicId, String systemId)
-  throws IOException, SAXException {
-    // TODO Auto-generated method stub (what should we do here?)
-    return super.resolveEntity(publicId, systemId);
-  }
-  
-  /* (non-Javadoc)
-   * @see org.xml.sax.ContentHandler#setDocumentLocator(org.xml.sax.Locator)
-   */
-  public void setDocumentLocator(Locator locator) {
-    // TODO Auto-generated method stub (what should we do here?)
-    super.setDocumentLocator(locator);
-  }
-  
-  /* (non-Javadoc)
    * @see org.xml.sax.ContentHandler#skippedEntity(java.lang.String)
    */
   public void skippedEntity(String name) throws SAXException {
@@ -265,9 +248,14 @@ public class SAXWriter extends DefaultHandler {
   /**
    * Write the magic byte sequence for Binary SAX files ("BSAX" in ASCII)
    * to the stream, followed by a UTF-8 encoded integer representing the
-   * version of the BSAX, followec by a UTF-8 encoded integer representing
+   * version of the BSAX, followed by a UTF-8 encoded integer representing
    * the maximum size of the string table (zero, or a number at least 7 --
-   * zero means unlimited).
+   * zero means unlimited). The magic number seven comes from the two
+   * fixed entries at indices zero and one (null and empty string,
+   * respectively) and the number of strings required for the operator
+   * with the most arguments (five). Without a string table with room
+   * for at least this many strings, there is no way to use all the
+   * operators.
    * 
    * @see org.xml.sax.ContentHandler#startDocument()
    */
@@ -327,22 +315,12 @@ public class SAXWriter extends DefaultHandler {
     BSAXUtil.writeInt(out, prefixId);
     BSAXUtil.writeInt(out, uriId);
   }
-  
+
   /* (non-Javadoc)
-   * @see org.xml.sax.DTDHandler#unparsedEntityDecl(java.lang.String, java.lang.String, java.lang.String, java.lang.String)
+   * @see org.xml.sax.ContentHandler#setDocumentLocator(org.xml.sax.Locator)
    */
-  public void unparsedEntityDecl(String name, String publicId, String systemId,
-      String notationName) throws SAXException {
-    int nameId = getStringId(name);
-    int publicIdId = getStringId(publicId);
-    int systemIdId = getStringId(systemId);
-    int notationNameId = getStringId(notationName);
-    
-    BSAXUtil.writeInt(out, BSAXConstants.OP_UNPARSED_ENTITY_DECL);
-    BSAXUtil.writeInt(out, nameId);
-    BSAXUtil.writeInt(out, publicIdId);
-    BSAXUtil.writeInt(out, systemIdId);
-    BSAXUtil.writeInt(out, notationNameId);
+  public void setDocumentLocator(Locator locator) {
+    // TODO Auto-generated method stub. What should we do here?
   }
   
 }

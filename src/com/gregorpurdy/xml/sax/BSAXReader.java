@@ -127,17 +127,6 @@ public class BSAXReader implements XMLReader {
   /**
    * @throws SAXException
    */
-  private void doOpNotationDecl() throws SAXException {
-    String name = readString();
-    String publicId = readString();
-    String systemId = readString();
-    
-    throw new SAXException("UNSUPPORTED: notation declaration operation");
-  }
-  
-  /**
-   * @throws SAXException
-   */
   private void doOpProcessingInstruction() throws SAXException {
     String target = readString();
     String data = readString();
@@ -247,18 +236,6 @@ public class BSAXReader implements XMLReader {
     }
   }
   
-  /**
-   * @throws SAXException
-   */
-  private void doOpUnparsedEntityDecl() throws SAXException {
-    String name = readString();
-    String publicId = readString();
-    String systemId = readString();
-    String notationName = readString();
-    
-    throw new SAXException("UNSUPPORTED: unparsed entity declaration operation");
-  }
-  
   /*
    * (non-Javadoc)
    * 
@@ -295,26 +272,24 @@ public class BSAXReader implements XMLReader {
     return errorHandler;
   }
   
-  /*
-   * (non-Javadoc)
+  /**
+   * This class doesn't support any SAX "features".
    * 
    * @see org.xml.sax.XMLReader#getFeature(java.lang.String)
    */
   public boolean getFeature(String name) throws SAXNotRecognizedException,
   SAXNotSupportedException {
-    // TODO Auto-generated method stub
-    return false;
+    throw new SAXNotRecognizedException("Feature '" + name + "'");
   }
   
-  /*
-   * (non-Javadoc)
+  /**
+   * This class doesn't support any SAX "properties".
    * 
    * @see org.xml.sax.XMLReader#getProperty(java.lang.String)
    */
   public Object getProperty(String name) throws SAXNotRecognizedException,
   SAXNotSupportedException {
-    // TODO Auto-generated method stub
-    return null;
+    throw new SAXNotRecognizedException("Property '" + name + "'");
   }
   
   /**
@@ -406,14 +381,10 @@ public class BSAXReader implements XMLReader {
           doOpStartPrefixMapping();
         } else if (opCode == BSAXConstants.OP_END_PREFIX_MAPPING) {
           doOpEndPrefixMapping();
-        } else if (opCode == BSAXConstants.OP_NOTATION_DECL) {
-          doOpNotationDecl();
         } else if (opCode == BSAXConstants.OP_PROCESSING_INSTRUCTION) {
           doOpProcessingInstruction();
         } else if (opCode == BSAXConstants.OP_SKIPPED_ENTITY) {
           doOpSkippedEntity();
-        } else if (opCode == BSAXConstants.OP_UNPARSED_ENTITY_DECL) {
-          doOpUnparsedEntityDecl();
         } else {
           throw new SAXException("Unrecognized Binary SAX opcode " + opCode);
         }
@@ -503,24 +474,24 @@ public class BSAXReader implements XMLReader {
     this.errorHandler = handler;
   }
   
-  /*
-   * (non-Javadoc)
+  /**
+   * This class doesn't support any SAX "features".
    * 
    * @see org.xml.sax.XMLReader#setFeature(java.lang.String, boolean)
    */
   public void setFeature(String name, boolean value)
   throws SAXNotRecognizedException, SAXNotSupportedException {
-    // TODO Auto-generated method stub
+    throw new SAXNotRecognizedException("Feature '" + name + "'");
   }
   
-  /*
-   * (non-Javadoc)
+  /**
+   * This class does't support any SAX "properties".
    * 
    * @see org.xml.sax.XMLReader#setProperty(java.lang.String, java.lang.Object)
    */
   public void setProperty(String name, Object value)
   throws SAXNotRecognizedException, SAXNotSupportedException {
-    // TODO Auto-generated method stub
+    throw new SAXNotRecognizedException("Property '" + name + "'");
   }
   
 }
