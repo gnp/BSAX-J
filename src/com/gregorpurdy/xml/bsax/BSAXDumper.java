@@ -24,9 +24,8 @@ import org.xml.sax.SAXException;
  * This class reads in a BSAX stream and dumps a textual representation
  * of it to System.out. Its intended use is as a debugging aid.
  * 
- * @author Gregor N. Purdy &lt;gregor@focusresearch.com&gt;
- *         http://www.gregorpurdy.com/gregor/
- * @version $Id: BSAXReader.java 1925 2005-01-31 00:57:49Z gregor $
+ * @author Gregor N. Purdy &lt;gregor@focusresearch.com&gt; http://www.gregorpurdy.com/gregor/
+ * @version $Id$
  */
 public class BSAXDumper extends AbstractBSAXReader {
   
