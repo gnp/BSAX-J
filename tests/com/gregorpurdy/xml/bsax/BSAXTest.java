@@ -34,6 +34,8 @@ public class BSAXTest {
   private static final int TRIAL_COUNT = 500;
   
   public static void main(String[] args) throws Exception {
+  	System.setProperty("org.xml.sax.driver", "org.apache.xerces.parsers.SAXParser");
+  	
     String[] files = {
       "com/gregorpurdy/xml/bsax/personnel.xml",
 //      "com/gregorpurdy/xml/bsax/book.xml"

@@ -198,7 +198,7 @@ public class UTF8Codec {
     byte highNibble = (byte)((byte)(arg >>> BITS_PER_NIBBLE) & LOW_NIBBLE_MASK);
     byte lowNibble = (byte)((byte)(arg >>> 0) & LOW_NIBBLE_MASK);
     
-    StringBuilder temp = new StringBuilder();
+    StringBuffer temp = new StringBuffer();
     
     temp.append(HEX_PREFIX);
     temp.append(Integer.toHexString(highNibble));

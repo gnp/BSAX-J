@@ -58,7 +58,7 @@ public class SAXWriter implements ContentHandler {
   
   private OutputStream out = null;
   
-  private Map<String, Integer> stringMap = new HashMap<String, Integer>();
+  private Map stringMap = new HashMap();
   
   /**
    * Generate a string id for the character sequence and emit
@@ -172,7 +172,7 @@ public class SAXWriter implements ContentHandler {
       return EMPTY_STRING_ID;
     }
     
-    Integer id = stringMap.get(string);
+    Integer id = (Integer)stringMap.get(string);
     
     if (id == null) {
       id = new Integer(nextStringId++);
