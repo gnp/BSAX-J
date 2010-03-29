@@ -207,8 +207,8 @@ public class BSAXUtil {
    * @throws SAXException
    */
   public static void convertBsaxToXml(InputStream input, OutputStream output) throws UnsupportedEncodingException, IOException, SAXException {
-    sax.Writer writer = new sax.Writer();
-    writer.setOutput(output, "UTF-8");
+    SAXWriter writer = new SAXWriter(output);
+//    writer.setOutput(output, "UTF-8");
 
     BSAXReader reader = new BSAXReader();
     reader.setContentHandler(writer);
