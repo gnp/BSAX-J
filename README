@@ -1,7 +1,4 @@
-                BSAX Java Build Instructions
-                ------------------------------
+README
 
-BSAX-J is built with Maven.
-
-    mvn compile
-
+BSAX-J is a Java implementation of a binary representation for XML based on encoding SAX
+events as a stream of opcodes and operands.
