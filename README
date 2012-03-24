@@ -1,4 +1,0 @@
-README
-
-BSAX-J is a Java implementation of a binary representation for XML based on encoding SAX
-events as a stream of opcodes and operands.
